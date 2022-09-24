@@ -3,6 +3,7 @@ import NewsItem from './NewsItem'
 import Spinner from './Spinner';
 import PropTypes from 'prop-types'
 import InfiniteScroll from "react-infinite-scroll-component";
+import axios from 'axios'
 
 const News = (props) => {
     const [articles, setarticles] = useState([])
@@ -15,21 +16,24 @@ const News = (props) => {
     }
 
     const updateNews = async () => {
-        // props.setProgress(10)
-        var headers = {}
-        let url1 = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${page}&pageSize=${props.pageSize}`
         setLoading(true)
-        let data = await fetch(url1, {
-            method: "GET",
-            mode: 'cors',
-            headers: headers
-        })
-        let parsedData = await data.json()
+        let dataFetcherFromBackend = async () => {
+            let dataOfBackend = await axios.post('/postreq', {
+                country: props.country,
+                category: props.category,
+                page: page,
+                pageSize: props.pageSize
+            })
+            return dataOfBackend
+        }
+        let backendData = await dataFetcherFromBackend()
+        let parsedData = backendData.data
+        console.log(parsedData);
         setarticles(parsedData.articles)
         setTotalResults(parsedData.totalResults)
         setLoading(false)
-        // props.setProgress(100)
     }
+
 
     useEffect(() => {
         document.title = `${capitalFirstLetter(props.category)} - NewsGorilla`
@@ -47,10 +51,18 @@ const News = (props) => {
     // }
 
     const fetchMoreData = async () => {
-        let url1 = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${page + 1}&pageSize=${props.pageSize}`
+        let dataFetcherFromBackend = async () => {
+            let dataOfBackend = await axios.post('/postreq', {
+                country: props.country,
+                category: props.category,
+                page: page + 1,
+                pageSize: props.pageSize
+            })
+            return dataOfBackend
+        }
+        let backendData = await dataFetcherFromBackend()
+        let parsedData = backendData.data
         setPage(page + 1)
-        let data = await fetch(url1)
-        let parsedData = await data.json()
         setarticles(articles.concat(parsedData.articles))
         setTotalResults(parsedData.totalResults)
     }
