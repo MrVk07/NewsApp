@@ -28,7 +28,6 @@ const News = (props) => {
         }
         let backendData = await dataFetcherFromBackend()
         let parsedData = backendData.data
-        console.log(parsedData);
         setarticles(parsedData.articles)
         setTotalResults(parsedData.totalResults)
         setLoading(false)
