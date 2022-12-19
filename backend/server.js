@@ -14,11 +14,6 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 const port = process.env.PORT || 5000
 
-const __dirname = path.resolve();
-app.use(express.static(path.join(__dirname, '/frontend/build')));
-app.get('*', (req, res) =>
-    res.sendFile(path.join(__dirname, '/frontend/build/index.html'))
-);
 
 app.get('/', (req, res) => {
     res.send("From backend")
@@ -37,3 +32,8 @@ app.post('/postreq', async (req, res) => {
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`)
 })
+const __dirname = path.resolve();
+app.use(express.static(path.join(__dirname, '/frontend/build')));
+app.get('*', (req, res) =>
+    res.sendFile(path.join(__dirname, '/frontend/build/index.html'))
+);
